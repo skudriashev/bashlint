@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import inspect
+import optparse
 import os
 import sys
 
@@ -76,7 +77,8 @@ class StyleGuide(object):
 
     FILE_PATTERNS = ('*.sh',)
 
-    def __init__(self):
+    def __init__(self, options):
+        self._options = options
         self._checker = StyleChecker()
 
     def check_paths(self, paths=None):
@@ -96,9 +98,16 @@ class StyleGuide(object):
                     self._checker.check_file(os.path.join(root, filename))
 
 
+def parse_args():
+    parser = optparse.OptionParser(prog='bashlint',
+                                   usage="%prog [options] input ...")
+    return parser.parse_args()
+
+
 def main():
-    guide = StyleGuide()
-    guide.check_paths()
+    options, args = parse_args()
+    guide = StyleGuide(options)
+    guide.check_paths(args)
 
 
 if __name__ == "__main__":
