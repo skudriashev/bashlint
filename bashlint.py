@@ -43,6 +43,11 @@ class StyleChecker(object):
 
     def __init__(self):
         self._checkers = self._load_checkers()
+        self._errors_count = 0
+
+    @property
+    def errors_count(self):
+        return self._errors_count
 
     def _load_checkers(self):
         """Load checkers from the current module."""
@@ -66,6 +71,7 @@ class StyleChecker(object):
             for checker in self._checkers:
                 result = checker(line)
                 if result is not None:
+                    self._errors_count += 1
                     offset, text = result
                     print("%s:%s:%s: %s" % (filename, i, offset, text))
                     print(line[:-1])
@@ -80,6 +86,10 @@ class StyleGuide(object):
     def __init__(self, options):
         self._options = options
         self._checker = StyleChecker()
+
+    @property
+    def errors_count(self):
+        return self._checker.errors_count
 
     def check_paths(self, paths=None):
         """Run all checks on the paths."""
@@ -108,6 +118,8 @@ def main():
     options, args = parse_args()
     guide = StyleGuide(options)
     guide.check_paths(args)
+    if guide.errors_count:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
