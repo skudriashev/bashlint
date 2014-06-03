@@ -2,6 +2,6 @@ language: python
 env:
   - TOXENV=pep8
 install:
-  - pip install flake8
+  - pip install hacking
 script:
   - tox

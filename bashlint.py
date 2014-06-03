@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
+import fnmatch
 import inspect
 import optparse
 import os
 import sys
-
-from fnmatch import fnmatch
 
 
 def filename_match(filename, patterns, default=True):
@@ -16,7 +15,7 @@ def filename_match(filename, patterns, default=True):
     if not patterns:
         return default
 
-    return any(fnmatch(filename, pattern) for pattern in patterns)
+    return any(fnmatch.fnmatch(filename, pattern) for pattern in patterns)
 
 
 def read_lines(filename):
