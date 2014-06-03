@@ -1,0 +1,7 @@
+language: python
+env:
+  - TOXENV=pep8
+install:
+  - pip install flake8
+script:
+  - tox
