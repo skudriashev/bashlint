@@ -4,7 +4,10 @@ import fnmatch
 import inspect
 import optparse
 import os
+import re
 import sys
+
+REGEXP_SEMICOLON = '.+[\s]*;[\s]*$'
 
 
 def filename_match(filename, patterns, default=True):
@@ -35,6 +38,12 @@ def checker_trailing_whitespace(physical_line):
             return len(stripped), "Trailing whitespace"
         else:
             return 0, "Blank line contains whitespace"
+
+
+def checker_trailing_semicolon(physical_line):
+    """Trailing semicolon is superfluous."""
+    if re.search(REGEXP_SEMICOLON, physical_line):
+        return physical_line.rfind(';'), "Trailing semicolon"
 
 
 class StyleChecker(object):
