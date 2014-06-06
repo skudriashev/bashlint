@@ -7,7 +7,7 @@ import os
 import re
 import sys
 
-REGEXP_SEMICOLON = '.+[\s]*;[\s]*$'
+REGEXP_SEMICOLON = re.compile('.+[\s]*;[\s]*$')
 
 
 def filename_match(filename, patterns, default=True):
@@ -42,7 +42,7 @@ def checker_trailing_whitespace(physical_line):
 
 def checker_trailing_semicolon(physical_line):
     """Trailing semicolon is superfluous."""
-    if re.search(REGEXP_SEMICOLON, physical_line):
+    if REGEXP_SEMICOLON.search(physical_line):
         return physical_line.rfind(';'), "Trailing semicolon"
 
 
@@ -57,7 +57,8 @@ class StyleChecker(object):
     def errors_count(self):
         return self._errors_count
 
-    def _load_checkers(self):
+    @staticmethod
+    def _load_checkers():
         """Load checkers from the current module."""
         checkers = []
         current_module = sys.modules.get(__name__)
@@ -74,7 +75,6 @@ class StyleChecker(object):
     def check_file(self, filename):
         """"Run checks for a given file."""
         print("Checking %s" % filename)
-
         for i, line in enumerate(read_lines(filename), 1):
             for checker in self._checkers:
                 result = checker(line)
