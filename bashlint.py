@@ -35,21 +35,47 @@ def checker_trailing_whitespace(physical_line):
     stripped = physical_line.rstrip(' \t\v')
     if physical_line != stripped:
         if stripped:
-            return len(stripped), "Trailing whitespace"
+            return len(stripped), "W101 Trailing whitespace"
         else:
-            return 0, "Blank line contains whitespace"
+            return 0, "W102 Blank line contains whitespace"
 
 
 def checker_trailing_semicolon(physical_line):
     """Trailing semicolon is superfluous."""
     if REGEXP_SEMICOLON.search(physical_line):
-        return physical_line.rfind(';'), "Trailing semicolon"
+        return physical_line.rfind(';'), "W103 Trailing semicolon"
 
 
-class StyleChecker(object):
-    """Coding style checker."""
+class Violation(object):
+    """Represents single violation."""
 
-    def __init__(self):
+    def __init__(self, filename, line, line_number, offset, text):
+        self._filename = filename
+        self._line = line
+        self._line_number = line_number
+        self._offset = offset
+        self._text = text
+
+    def __str__(self):
+        return "%s:%s:%s: %s" % (self._filename, self._line_number,
+                                 self._offset, self._text)
+
+    @property
+    def line(self):
+        return self._line[:-1]
+
+    @property
+    def pointer(self):
+        return ' '*self._offset + '^'
+
+
+class StyleGuide(object):
+    """Bash style guide."""
+
+    FILE_PATTERNS = ('*.sh',)
+
+    def __init__(self, options):
+        self._reporter = Reporter(options.show_source)
         self._checkers = self._load_checkers()
         self._errors_count = 0
 
@@ -69,35 +95,7 @@ class StyleChecker(object):
                     checkers.append(func)
 
         print("Loaded %s checker(s)." % len(checkers))
-
         return checkers
-
-    def check_file(self, filename):
-        """"Run checks for a given file."""
-        print("Checking %s" % filename)
-        for i, line in enumerate(read_lines(filename), 1):
-            for checker in self._checkers:
-                result = checker(line)
-                if result is not None:
-                    self._errors_count += 1
-                    offset, text = result
-                    print("%s:%s:%s: %s" % (filename, i, offset, text))
-                    print(line[:-1])
-                    print(' '*offset + '^')
-
-
-class StyleGuide(object):
-    """Bash style guide."""
-
-    FILE_PATTERNS = ('*.sh',)
-
-    def __init__(self, options):
-        self._options = options
-        self._checker = StyleChecker()
-
-    @property
-    def errors_count(self):
-        return self._checker.errors_count
 
     def check_paths(self, paths=None):
         """Run all checks on the paths."""
@@ -109,16 +107,48 @@ class StyleGuide(object):
             print("... stopped")
 
     def _check_dir(self, path):
-        """Check all files in this directory and all subdirectories."""
+        """Check all files in the given directory and all subdirectories."""
         for root, dirs, files in os.walk(path):
             for filename in sorted(files):
                 if filename_match(filename, self.FILE_PATTERNS):
-                    self._checker.check_file(os.path.join(root, filename))
+                    print("Checking %s" % filename)
+                    self._check_file(os.path.join(root, filename))
+
+    def _check_file(self, filename):
+        """"Run checks for a given file."""
+        for line_number, line in enumerate(read_lines(filename), 1):
+            for checker in self._checkers:
+                result = checker(line)
+                if result is not None:
+                    self._errors_count += 1
+                    offset, text = result
+                    violation = Violation(filename=filename,
+                                          line=line,
+                                          line_number=line_number,
+                                          offset=offset,
+                                          text=text)
+                    self._reporter.report(violation)
+
+
+class Reporter(object):
+    """Standard output violations reporter."""
+
+    def __init__(self, show_source=False):
+        self._show_source = show_source
+
+    def report(self, violation):
+        """Report given violations."""
+        print(violation)
+        if self._show_source:
+            print(violation.line)
+            print(violation.pointer)
 
 
 def parse_args():
     parser = optparse.OptionParser(prog='bashlint',
                                    usage="%prog [options] input ...")
+    parser.add_option('--show-source', action='store_true',
+                      help="show source code for each error")
     return parser.parse_args()
 
 
