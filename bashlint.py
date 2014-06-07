@@ -28,7 +28,13 @@ def read_lines(filename):
 
 
 def checker_trailing_whitespace(physical_line):
-    """Trailing whitespace is superfluous."""
+    """Trailing whitespace is superfluous.
+
+    Okay: echo Test#
+    W201: echo Test #
+    Okay: #
+    W202:  #
+    """
     physical_line = physical_line.rstrip('\n')    # chr(10), newline
     physical_line = physical_line.rstrip('\r')    # chr(13), carriage return
     physical_line = physical_line.rstrip('\x0c')  # chr(12), form feed, ^L
@@ -41,7 +47,11 @@ def checker_trailing_whitespace(physical_line):
 
 
 def checker_trailing_semicolon(physical_line):
-    """Trailing semicolon is superfluous."""
+    """Trailing semicolon is superfluous.
+
+    Okay: echo Test#
+    W203: echo Test;#
+    """
     if REGEXP_SEMICOLON.search(physical_line):
         return physical_line.rfind(';'), "W203 Trailing semicolon"
 
