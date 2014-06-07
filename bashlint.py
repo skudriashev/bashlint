@@ -7,7 +7,7 @@ import os
 import re
 import sys
 
-REGEXP_SEMICOLON = re.compile('.+[\s]*;[\s]*$')
+REGEXP_SEMICOLON = re.compile('.*[\s]*;[\s]*$')
 
 
 def filename_match(filename, patterns, default=True):
@@ -35,15 +35,15 @@ def checker_trailing_whitespace(physical_line):
     stripped = physical_line.rstrip(' \t\v')
     if physical_line != stripped:
         if stripped:
-            return len(stripped), "W101 Trailing whitespace"
+            return len(stripped), "W201 Trailing whitespace"
         else:
-            return 0, "W102 Blank line contains whitespace"
+            return 0, "W202 Blank line contains whitespace"
 
 
 def checker_trailing_semicolon(physical_line):
     """Trailing semicolon is superfluous."""
     if REGEXP_SEMICOLON.search(physical_line):
-        return physical_line.rfind(';'), "W103 Trailing semicolon"
+        return physical_line.rfind(';'), "W203 Trailing semicolon"
 
 
 class Violation(object):
