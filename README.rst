@@ -26,18 +26,18 @@ or in development mode::
 
 Rules list
 ----------
-**W201 Trailing whitespace** - Trailing whitespaces are superfluous::
+**W201 Trailing whitespace**: Trailing whitespaces are superfluous::
 
     Okay: echo Test#
     W201: echo Test #
 
-**W202 - Blank line contains whitespace** - Trailing whitespaces on blank lines
+**W202 Blank line contains whitespace**: Trailing whitespaces on blank lines
 are superfluous::
 
     Okay: #
     W202:  #
 
-**W203 - Trailing semicolon** - Trailing semicolons are superfluous::
+**W203 Trailing semicolon**: Trailing semicolons are superfluous::
 
     Okay: echo Test#
     W203: echo Test;#
