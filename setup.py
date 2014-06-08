@@ -12,6 +12,7 @@ setuptools.setup(
     author='Stanislav Kudriashev',
     author_email='stas.kudriashev@gmail.com',
     url='https://github.com/skudriashev/bashlint',
+    download_url='https://github.com/skudriashev/bashlint/tarball/0.1.0',
     license='MIT',
     py_modules=['bashlint'],
     zip_safe=False,
