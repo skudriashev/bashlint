@@ -1,11 +1,13 @@
+import codecs
+
 import setuptools
 
 
 setuptools.setup(
     name='bashlint',
     version='0.0.1',
-    description="Bash linting tool",
-    long_description="Simple Bash linting tool written in Python.",
+    description='Bash linting tool',
+    long_description=codecs.open('README.rst', 'r', 'utf-8').read(),
     keywords='bash',
     author='Stanislav Kudriashev',
     author_email='stas.kudriashev@gmail.com',
