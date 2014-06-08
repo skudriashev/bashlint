@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
     name='bashlint',
-    version='0.0.1',
+    version='0.1.0',
     description='Bash linting tool',
     long_description=codecs.open('README.rst', 'r', 'utf-8').read(),
     keywords='bash',
