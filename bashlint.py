@@ -85,6 +85,7 @@ class StyleGuide(object):
     FILE_PATTERNS = ('*.sh',)
 
     def __init__(self, options):
+        self._options = options
         self._reporter = Reporter(options.show_source)
         self._checkers = self._load_checkers()
         self._errors_count = 0
@@ -93,8 +94,7 @@ class StyleGuide(object):
     def errors_count(self):
         return self._errors_count
 
-    @staticmethod
-    def _load_checkers():
+    def _load_checkers(self):
         """Load checkers from the current module."""
         checkers = []
         current_module = sys.modules.get(__name__)
@@ -104,7 +104,9 @@ class StyleGuide(object):
                 if name.startswith('checker'):
                     checkers.append(func)
 
-        print("Loaded %s checker(s)." % len(checkers))
+        if self._options.verbose > 1:
+            print("Loaded %s checker(s)." % len(checkers))
+
         return checkers
 
     def check_paths(self, paths=None):
@@ -121,7 +123,8 @@ class StyleGuide(object):
         for root, dirs, files in os.walk(path):
             for filename in sorted(files):
                 if filename_match(filename, self.FILE_PATTERNS):
-                    print("Checking %s" % filename)
+                    if self._options.verbose:
+                        print("Checking %s" % filename)
                     self._check_file(os.path.join(root, filename))
 
     def _check_file(self, filename):
@@ -157,6 +160,8 @@ class Reporter(object):
 def parse_args():
     parser = optparse.OptionParser(prog='bashlint',
                                    usage="%prog [options] input ...")
+    parser.add_option('-v', '--verbose', default=0, action='count',
+                      help="print debug messages")
     parser.add_option('--show-source', action='store_true',
                       help="show source code for each error")
     return parser.parse_args()
