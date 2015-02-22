@@ -57,7 +57,9 @@ def checker_trailing_semicolon(physical_line):
 
 
 class Violation(object):
-    """Represents single violation."""
+    """Represents a single violation."""
+
+    __slots__ = ['_filename', '_line', '_line_number', '_offset', '_text']
 
     def __init__(self, filename, line, line_number, offset, text):
         self._filename = filename
@@ -140,7 +142,11 @@ class StyleGuide(object):
                                           line_number=line_number,
                                           offset=offset,
                                           text=text)
-                    self._reporter.report(violation)
+                    self._report(violation)
+
+    def _report(self, violation):
+        """Report a violation using reporter."""
+        self._reporter.report(violation)
 
 
 class Reporter(object):
