@@ -50,6 +50,7 @@ class TestCheckers(testtools.TestCase):
             "",
             "echo Test",
             "echo Test; echo Test2",
+            " ;; ",
         ])
 
     def test_w203_error(self):
