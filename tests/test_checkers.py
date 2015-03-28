@@ -51,6 +51,7 @@ class TestCheckers(testtools.TestCase):
             "echo Test",
             "echo Test; echo Test2",
             " ;; ",
+            "find -type f -exec cat {} \;",
         ])
 
     def test_w203_error(self):

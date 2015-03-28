@@ -7,8 +7,8 @@ import os
 import re
 import sys
 
-REGEXP_SEMICOLON = re.compile('.*\s*;\s*$')
-REGEXP_CASE_SEMICOLON = re.compile("\s*;;\s*$")
+REGEXP_SEMICOLON_OK = re.compile(r'(?:\s*;;\s*|\s+\\;\s*)$')
+REGEXP_SEMICOLON_WARN = re.compile('.*\s*;\s*$')
 
 
 def filename_match(filename, patterns, default=True):
@@ -53,8 +53,8 @@ def checker_trailing_semicolon(physical_line):
     Okay: echo Test#
     W203: echo Test;#
     """
-    if not REGEXP_CASE_SEMICOLON.search(physical_line):
-        if REGEXP_SEMICOLON.search(physical_line):
+    if not REGEXP_SEMICOLON_OK.search(physical_line):
+        if REGEXP_SEMICOLON_WARN.search(physical_line):
             return physical_line.rfind(';'), "W203 Trailing semicolon"
 
 
