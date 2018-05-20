@@ -167,7 +167,7 @@ class Reporter(object):
 
 def parse_args():
     parser = optparse.OptionParser(prog='bashlint',
-                                   usage="%prog [options] input ...")
+                                   usage="%prog [options] [<path>]...")
     parser.add_option('-v', '--verbose', default=0, action='count',
                       help="print debug messages")
     parser.add_option('--show-source', action='store_true',
