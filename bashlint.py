@@ -8,7 +8,7 @@ import re
 import sys
 
 REGEXP_SEMICOLON_OK = re.compile(r'(?:\s*;;\s*|\s+\\;\s*)$')
-REGEXP_SEMICOLON_WARN = re.compile('.*\s*;\s*$')
+REGEXP_SEMICOLON_WARN = re.compile(r'.*\s*;\s*$')
 
 
 def filename_match(filename, patterns, default=True):
@@ -80,7 +80,7 @@ class Violation(object):
 
     @property
     def pointer(self):
-        return ' '*self._offset + '^'
+        return ' ' * self._offset + '^'
 
 
 class StyleGuide(object):
